@@ -21,9 +21,12 @@ jobs:
           ls -la _incoming
           for f in _incoming/*.html; do echo "$f: $(du -h "$f" | cut -f1)"; done
       - name: Commit fetched files
+        env:
+          GH_PUSH_TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
         run: |
           git config user.email "bot@feitoria.local"
           git config user.name "Fetch Bot"
+          git remote set-url origin "https://x-access-token:${GH_PUSH_TOKEN}@github.com/dougfb46/feitoria-site.git"
           git add -f _incoming
           git commit -m "fetch: baixar arquivos do Claude Design" || echo "nada para commitar"
           git push origin temp-fetch
