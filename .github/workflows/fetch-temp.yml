@@ -1,0 +1,29 @@
+name: fetch-temp
+on:
+  push:
+    branches: [ temp-fetch ]
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download design files
+        run: |
+          mkdir -p _incoming
+          curl -sL -o "_incoming/home.html" "https://69d3e01b-bc9a-4640-9d48-8f14729aee02.claudeusercontent.com/v1/design/projects/69d3e01b-bc9a-4640-9d48-8f14729aee02/serve/publicar/home.html?t=f8883f57fb9a3c20364d4862dda0ed7b9a158fe3518a63aa6155ab0868f5cb69.b92d091f-2b28-42e7-bd2d-bd7b3afee71c.54cac009-41c3-4107-9b1b-0b146b373052.1788999836.fp&direct=1"
+          curl -sL -o "_incoming/quem-somos.html" "https://69d3e01b-bc9a-4640-9d48-8f14729aee02.claudeusercontent.com/v1/design/projects/69d3e01b-bc9a-4640-9d48-8f14729aee02/serve/publicar/quem-somos.html?t=842a9a64b0b53c7167e9a1c66c91734a74d999fff4108ae6338bb64b1dd7a190.b92d091f-2b28-42e7-bd2d-bd7b3afee71c.54cac009-41c3-4107-9b1b-0b146b373052.1788999836.fp&direct=1"
+          curl -sL -o "_incoming/diario-do-grao-ao-copo.html" "https://69d3e01b-bc9a-4640-9d48-8f14729aee02.claudeusercontent.com/v1/design/projects/69d3e01b-bc9a-4640-9d48-8f14729aee02/serve/publicar/diario-do-grao-ao-copo.html?t=4b98bdde5c838207785846fd89b920750ab5f1fd2d965a49634fd612d7766ade.b92d091f-2b28-42e7-bd2d-bd7b3afee71c.54cac009-41c3-4107-9b1b-0b146b373052.1788999837.fp&direct=1"
+          curl -sL -o "_incoming/diario-o-que-entra-na-torneira.html" "https://69d3e01b-bc9a-4640-9d48-8f14729aee02.claudeusercontent.com/v1/design/projects/69d3e01b-bc9a-4640-9d48-8f14729aee02/serve/publicar/diario-o-que-entra-na-torneira.html?t=015501aa8688fc825d0fbc4abe65ac700dc84e8260102cd6d52d209d4a750d84.b92d091f-2b28-42e7-bd2d-bd7b3afee71c.54cac009-41c3-4107-9b1b-0b146b373052.1788999837.fp&direct=1"
+          curl -sL -o "_incoming/diario-o-que-comer-com-cada-chopp.html" "https://69d3e01b-bc9a-4640-9d48-8f14729aee02.claudeusercontent.com/v1/design/projects/69d3e01b-bc9a-4640-9d48-8f14729aee02/serve/publicar/diario-o-que-comer-com-cada-chopp.html?t=aefc6be32062953b512414cb93ca7f31e2e82762cd227c67df0ebb9c67204afd.b92d091f-2b28-42e7-bd2d-bd7b3afee71c.54cac009-41c3-4107-9b1b-0b146b373052.1788999838.fp&direct=1"
+          curl -sL -o "_incoming/diario-mogi-na-mesa.html" "https://69d3e01b-bc9a-4640-9d48-8f14729aee02.claudeusercontent.com/v1/design/projects/69d3e01b-bc9a-4640-9d48-8f14729aee02/serve/publicar/diario-mogi-na-mesa.html?t=9cf06a4f615f85aa6e35d6b43f016cff337a512878506fbc6b5e42e9a5559520.b92d091f-2b28-42e7-bd2d-bd7b3afee71c.54cac009-41c3-4107-9b1b-0b146b373052.1788999839.fp&direct=1"
+          curl -sL -o "_incoming/diario-o-dia-comeca-antes.html" "https://69d3e01b-bc9a-4640-9d48-8f14729aee02.claudeusercontent.com/v1/design/projects/69d3e01b-bc9a-4640-9d48-8f14729aee02/serve/publicar/diario-o-dia-comeca-antes.html?t=2457f9c696371e34f39733cd46b012ef507aea255b3f79c6c6ddc464e28b25a3.b92d091f-2b28-42e7-bd2d-bd7b3afee71c.54cac009-41c3-4107-9b1b-0b146b373052.1788999839.fp&direct=1"
+          curl -sL -o "_incoming/diario-como-pedir-sem-travar.html" "https://69d3e01b-bc9a-4640-9d48-8f14729aee02.claudeusercontent.com/v1/design/projects/69d3e01b-bc9a-4640-9d48-8f14729aee02/serve/publicar/diario-como-pedir-sem-travar.html?t=2ad074b58dab283f32e9ad1792e91e6a618075e7ed35f49315f7b3180d099345.b92d091f-2b28-42e7-bd2d-bd7b3afee71c.54cac009-41c3-4107-9b1b-0b146b373052.1788999840.fp&direct=1"
+          ls -la _incoming
+          for f in _incoming/*.html; do echo "$f: $(du -h "$f" | cut -f1)"; done
+      - name: Commit fetched files
+        run: |
+          git config user.email "bot@feitoria.local"
+          git config user.name "Fetch Bot"
+          git add -f _incoming
+          git commit -m "fetch: baixar arquivos do Claude Design" || echo "nada para commitar"
+          git push origin temp-fetch
